@@ -2,8 +2,8 @@
 {
 	internal class ImageColors
 	{
-		public const float COLOR_BLACK = 0f;
-		public const float COLOR_INVALID = -1f;
-		public const float COLOR_WHITE = 255;
+		public const float BLACK = 0f;
+		public const float INVALID = -1f;
+		public const float WHITE = 255;
 	}
 }

@@ -16,13 +16,11 @@ namespace HoleFilling.Infrastructure
 
 		public void TryAddMissingPixel(IBoundarySearcher boundarySearcher, ImageRegion imageRegion, Matrix<float> normalizedImageMatrix, int column, int row, float color)
 		{
-			if (color == ImageColors.COLOR_INVALID)
+			if (color == ImageColors.INVALID)
 			{
-				Pixel missing = new Pixel
+				Pixel missing = new Pixel(imageRegion, column, row)
 				{
 					Color = color,
-					Column = column,
-					Row = row
 				};
 
 				m_missingPixels.Add(missing);
@@ -34,7 +32,7 @@ namespace HoleFilling.Infrastructure
 		{
 			m_missingPixels.All(missingPixel =>
 			{
-				imageMatrix[missingPixel.Row, missingPixel.Column] = ImageColors.COLOR_WHITE;
+				imageMatrix[missingPixel.Row, missingPixel.Column] = ImageColors.WHITE;
 				return true;
 			});
 		}

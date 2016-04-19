@@ -45,7 +45,7 @@ namespace HoleFilling.Infrastructure
 				using (Matrix<float> imageWithMarkedBoundariesMatrix = new Matrix<float>(m_normalizedImageMatrix.Rows, m_normalizedImageMatrix.Cols))
 				{
 					m_normalizedImageMatrix.CopyTo(imageWithMarkedBoundariesMatrix);
-					imageWithMarkedBoundariesMatrix._Mul(ImageColors.COLOR_WHITE);
+					imageWithMarkedBoundariesMatrix._Mul(ImageColors.WHITE);
 					m_boundarySearher.TryMarkBoundaryPixels(imageWithMarkedBoundariesMatrix);
 					m_missingPixelsService.TryMarkMissingPixels(imageWithMarkedBoundariesMatrix);
 					imageWithMarkedBoundariesMatrix.CopyTo(result);
@@ -95,9 +95,9 @@ namespace HoleFilling.Infrastructure
 
 		private float SqueezeColorIntoRange(float color)
 		{
-			return color == ImageColors.COLOR_WHITE ?
-				ImageColors.COLOR_INVALID :
-				color /= ImageColors.COLOR_WHITE;
+			return color == ImageColors.WHITE ?
+				ImageColors.INVALID :
+				color /= ImageColors.WHITE;
 		}
 
 		#region IDisposable Support

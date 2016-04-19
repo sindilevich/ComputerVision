@@ -14,51 +14,23 @@ namespace HoleFilling.Tests
 		[TestMethod]
 		public void Pixels_Are_OutOfLowerBoundaries()
 		{
-			Assert.IsFalse(m_region.PixelWithinRegion(new Pixel
-			{
-				Column = -1,
-				Row = 1
-			}));
-			Assert.IsFalse(m_region.PixelWithinRegion(new Pixel
-			{
-				Column = 1,
-				Row = -1
-			}));
+			Assert.IsFalse(m_region.PixelWithinRegion(new Pixel(imageRegion: m_region, column: -1, row: 1)));
+			Assert.IsFalse(m_region.PixelWithinRegion(new Pixel(imageRegion: m_region, column: 1, row: -1)));
 		}
 
 		[TestMethod]
 		public void Pixels_Are_OutOfUpperBoundaries()
 		{
-			Assert.IsFalse(m_region.PixelWithinRegion(new Pixel
-			{
-				Column = DEFAULT_WIDTH,
-				Row = 1
-			}));
-			Assert.IsFalse(m_region.PixelWithinRegion(new Pixel
-			{
-				Column = 1,
-				Row = DEFAULT_HEIGHT
-			}));
+			Assert.IsFalse(m_region.PixelWithinRegion(new Pixel(imageRegion: m_region, column: DEFAULT_WIDTH, row: 1)));
+			Assert.IsFalse(m_region.PixelWithinRegion(new Pixel(imageRegion: m_region, column: 1, row: DEFAULT_HEIGHT)));
 		}
 
 		[TestMethod]
 		public void Pixels_Are_WithinBoundaries()
 		{
-			Assert.IsTrue(m_region.PixelWithinRegion(new Pixel
-			{
-				Column = 0,
-				Row = 0
-			}));
-			Assert.IsTrue(m_region.PixelWithinRegion(new Pixel
-			{
-				Column = DEFAULT_WIDTH - 1,
-				Row = DEFAULT_HEIGHT - 1
-			}));
-			Assert.IsTrue(m_region.PixelWithinRegion(new Pixel
-			{
-				Column = DEFAULT_WIDTH / 2,
-				Row = DEFAULT_HEIGHT / 2
-			}));
+			Assert.IsTrue(m_region.PixelWithinRegion(new Pixel(imageRegion: m_region, column: 0, row: 0)));
+			Assert.IsTrue(m_region.PixelWithinRegion(new Pixel(imageRegion: m_region, column: DEFAULT_WIDTH - 1, row: DEFAULT_HEIGHT - 1)));
+			Assert.IsTrue(m_region.PixelWithinRegion(new Pixel(imageRegion: m_region, column: DEFAULT_WIDTH / 2, row: DEFAULT_HEIGHT / 2)));
 		}
 
 		[TestInitialize]

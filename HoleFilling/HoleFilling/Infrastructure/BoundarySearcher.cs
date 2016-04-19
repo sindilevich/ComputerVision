@@ -31,17 +31,13 @@ namespace HoleFilling.Infrastructure
 						{
 							int neighborColumn = currentNeighbors.Data[0, i];
 							int neighborRow = currentNeighbors.Data[1, j];
-							Pixel boundaryPixel = new Pixel
-							{
-								Column = neighborColumn,
-								Row = neighborRow
-							};
+							Pixel boundaryPixel = new Pixel(imageRegion, neighborColumn, neighborRow);
 
 							if (imageRegion.PixelWithinRegion(boundaryPixel))
 							{
 								float boundaryColor = normalizedImageMatrix.Data[neighborRow, neighborColumn];
 
-								if (boundaryColor != ImageColors.COLOR_INVALID && boundaryColor != ImageColors.COLOR_WHITE)
+								if (boundaryColor != ImageColors.INVALID && boundaryColor != ImageColors.WHITE)
 								{
 									boundaryPixel.Color = boundaryColor;
 									BoundaryPixels.Add(boundaryPixel);
@@ -57,7 +53,7 @@ namespace HoleFilling.Infrastructure
 		{
 			BoundaryPixels.All(boundaryPixel =>
 			{
-				imageMatrix[boundaryPixel.Row, boundaryPixel.Column] = ImageColors.COLOR_BLACK;
+				imageMatrix[boundaryPixel.Row, boundaryPixel.Column] = ImageColors.BLACK;
 				return true;
 			});
 		}
