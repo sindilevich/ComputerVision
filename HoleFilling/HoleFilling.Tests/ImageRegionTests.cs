@@ -4,12 +4,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace HoleFilling.Tests
 {
 	[TestClass]
-	public class RegionTests
+	public class ImageRegionTests
 	{
 		private const int DEFAULT_HEIGHT = 480;
 		private const int DEFAULT_WIDTH = 640;
 
-		private Region m_region;
+		private ImageRegion m_region;
 
 		[TestMethod]
 		public void Pixels_Are_OutOfLowerBoundaries()
@@ -64,7 +64,7 @@ namespace HoleFilling.Tests
 		[TestInitialize]
 		public void TestInitialize()
 		{
-			m_region = new Region(DEFAULT_HEIGHT, DEFAULT_WIDTH);
+			m_region = new ImageRegion(DEFAULT_HEIGHT, DEFAULT_WIDTH);
 		}
 	}
 }

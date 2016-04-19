@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -10,17 +8,12 @@ namespace HoleFilling.Infrastructure
 {
 	internal sealed class HoleFiller : IDisposable
 	{
-		private const int COLOR_BLACK = 0;
-		private const float COLOR_INVALID = -1f;
-		private const float COLOR_WHITE = 255;
-
 		private static Lazy<HoleFiller> m_instance = new Lazy<HoleFiller>();
 
-		private IList<Pixel> m_boundaryPixels;
-		private Region m_imageRegion;
+		private IBoundarySearcher m_boundarySearher;
+		private ImageRegion m_imageRegion;
 		private string m_imageUri;
-		private IList<Pixel> m_missingPixels;
-		private Matrix<int> m_neighborsMatrix = new Matrix<int>(2, 3);
+		private IMissingPixelsService m_missingPixelsService;
 		private Matrix<float> m_normalizedImageMatrix;
 
 		public static HoleFiller Current
@@ -31,10 +24,12 @@ namespace HoleFilling.Infrastructure
 			}
 		}
 
-		public HoleFiller Initialize(string imageUri)
+		public HoleFiller Initialize(IMissingPixelsService missingPixelsService, IBoundarySearcher boundarySearcher, string imageUri)
 		{
+			Dispose();
 			m_imageUri = imageUri;
-			InitializeNeighborsMatrix();
+			InitializeBoundarySearcher(boundarySearcher);
+			InitializeMissingPixelsService(missingPixelsService);
 			InitializeImageMatrix();
 			return this;
 		}
@@ -50,17 +45,9 @@ namespace HoleFilling.Infrastructure
 				using (Matrix<float> imageWithMarkedBoundariesMatrix = new Matrix<float>(m_normalizedImageMatrix.Rows, m_normalizedImageMatrix.Cols))
 				{
 					m_normalizedImageMatrix.CopyTo(imageWithMarkedBoundariesMatrix);
-					imageWithMarkedBoundariesMatrix._Mul(COLOR_WHITE);
-					m_boundaryPixels.All(boundaryPixel =>
-					{
-						imageWithMarkedBoundariesMatrix[boundaryPixel.Row, boundaryPixel.Column] = COLOR_BLACK;
-						return true;
-					});
-					m_missingPixels.All(missingPixel =>
-					{
-						imageWithMarkedBoundariesMatrix[missingPixel.Row, missingPixel.Column] = COLOR_WHITE;
-						return true;
-					});
+					imageWithMarkedBoundariesMatrix._Mul(ImageColors.COLOR_WHITE);
+					m_boundarySearher.TryMarkBoundaryPixels(imageWithMarkedBoundariesMatrix);
+					m_missingPixelsService.TryMarkMissingPixels(imageWithMarkedBoundariesMatrix);
 					imageWithMarkedBoundariesMatrix.CopyTo(result);
 				}
 			});
@@ -71,8 +58,14 @@ namespace HoleFilling.Infrastructure
 		{
 			float squeezedColor = SqueezeColorIntoRange(color);
 
-			TryAddMissingPixel(column, row, squeezedColor);
+			m_missingPixelsService.TryAddMissingPixel(m_boundarySearher, m_imageRegion, m_normalizedImageMatrix, column, row, squeezedColor);
 			return squeezedColor;
+		}
+
+		private void InitializeBoundarySearcher(IBoundarySearcher boundarySearcher)
+		{
+			m_boundarySearher = boundarySearcher;
+			m_boundarySearher.Initialize();
 		}
 
 		private void InitializeImageMatrix()
@@ -80,9 +73,7 @@ namespace HoleFilling.Infrastructure
 			using (Image<Gray, float> image = new Image<Gray, float>(m_imageUri))
 			{
 				m_normalizedImageMatrix = new Matrix<float>(image.Height, image.Width);
-				m_imageRegion = new Region(image.Height, image.Width);
-				m_boundaryPixels = new List<Pixel>();
-				m_missingPixels = new List<Pixel>();
+				m_imageRegion = new ImageRegion(image.Height, image.Width);
 				image.CopyTo(m_normalizedImageMatrix);
 			}
 			for (int row = 0; row < m_normalizedImageMatrix.Rows; row++)
@@ -96,70 +87,17 @@ namespace HoleFilling.Infrastructure
 			}
 		}
 
-		private void InitializeNeighborsMatrix()
+		private void InitializeMissingPixelsService(IMissingPixelsService missingPixelsService)
 		{
-			m_neighborsMatrix.Data[0, 0] = m_neighborsMatrix.Data[1, 0] = -1;
-			m_neighborsMatrix.Data[0, 1] = m_neighborsMatrix.Data[1, 1] = 0;
-			m_neighborsMatrix.Data[0, 2] = m_neighborsMatrix.Data[1, 2] = 1;
+			m_missingPixelsService = missingPixelsService;
+			m_missingPixelsService.Initialize();
 		}
 
 		private float SqueezeColorIntoRange(float color)
 		{
-			return color == COLOR_WHITE ?
-				COLOR_INVALID :
-				color /= COLOR_WHITE;
-		}
-
-		private void TryAddBoundaryPixels(int column, int row)
-		{
-			using (Matrix<int> pixelCoordinates = new Matrix<int>(2, 3))
-			{
-				pixelCoordinates[0, 0] = pixelCoordinates[0, 1] = pixelCoordinates[0, 2] = column; // neighbor columns stored in row 0
-				pixelCoordinates[1, 0] = pixelCoordinates[1, 1] = pixelCoordinates[1, 2] = row; // neighbor rows stored in row 1
-				using (Matrix<int> currentNeighbors = m_neighborsMatrix.Add(pixelCoordinates))
-				{
-					for (int i = 0; i < currentNeighbors.Cols; i++)
-					{
-						for (int j = 0; j < currentNeighbors.Cols; j++)
-						{
-							int neighborColumn = currentNeighbors.Data[0, i];
-							int neighborRow = currentNeighbors.Data[1, j];
-							Pixel boundaryPixel = new Pixel
-							{
-								Column = neighborColumn,
-								Row = neighborRow
-							};
-
-							if (m_imageRegion.PixelWithinRegion(boundaryPixel))
-							{
-								float boundaryColor = m_normalizedImageMatrix.Data[neighborRow, neighborColumn];
-
-								if (boundaryColor != COLOR_INVALID && boundaryColor != COLOR_WHITE)
-								{
-									boundaryPixel.Color = boundaryColor;
-									m_boundaryPixels.Add(boundaryPixel);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		private void TryAddMissingPixel(int column, int row, float color)
-		{
-			if (color == COLOR_INVALID)
-			{
-				Pixel missing = new Pixel
-				{
-					Color = color,
-					Column = column,
-					Row = row
-				};
-
-				m_missingPixels.Add(missing);
-				TryAddBoundaryPixels(column, row);
-			}
+			return color == ImageColors.COLOR_WHITE ?
+				ImageColors.COLOR_INVALID :
+				color /= ImageColors.COLOR_WHITE;
 		}
 
 		#region IDisposable Support
@@ -179,13 +117,13 @@ namespace HoleFilling.Infrastructure
 			{
 				if (disposing)
 				{
-					m_neighborsMatrix.Dispose();
-					m_normalizedImageMatrix.Dispose();
+					m_boundarySearher?.Dispose();
+					m_missingPixelsService?.Dispose();
+					m_normalizedImageMatrix?.Dispose();
 				}
 
-				m_boundaryPixels = null;
-				m_missingPixels = null;
-				m_neighborsMatrix = null;
+				m_boundarySearher = null;
+				m_missingPixelsService = null;
 				m_normalizedImageMatrix = null;
 				disposedValue = true;
 			}

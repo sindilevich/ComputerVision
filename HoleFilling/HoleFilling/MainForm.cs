@@ -17,7 +17,7 @@ namespace HoleFilling
 			FormClosing += (sender, e) => m_holeFiller.Dispose();
 			originalImage.LoadCompleted += async (sender, e) =>
 			{
-				m_holeFiller = HoleFiller.Current.Initialize(originalImage.ImageLocation);
+				m_holeFiller = HoleFiller.Current.Initialize(new MissingPixelsService(), new BoundarySearcher(), originalImage.ImageLocation);
 				using (Image<Gray, float> imageWithMarkedBoundaries = await m_holeFiller.MarkBoundaries())
 				{
 					if (imageWithMarkedBoundaries != null)

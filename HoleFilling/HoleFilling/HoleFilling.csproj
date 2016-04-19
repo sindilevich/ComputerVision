@@ -56,7 +56,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\BoundarySearcher.cs" />
     <Compile Include="Infrastructure\HoleFiller.cs" />
+    <Compile Include="Infrastructure\IBoundarySearcher.cs" />
+    <Compile Include="Infrastructure\ImageColors.cs" />
+    <Compile Include="Infrastructure\IMissingPixelsService.cs" />
+    <Compile Include="Infrastructure\MissingPixelsService.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -64,7 +69,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Pixel.cs" />
-    <Compile Include="Models\Region.cs" />
+    <Compile Include="Models\ImageRegion.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">

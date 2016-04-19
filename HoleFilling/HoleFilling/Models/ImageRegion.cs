@@ -1,8 +1,8 @@
 ﻿namespace HoleFilling.Models
 {
-	public class Region
+	public class ImageRegion
 	{
-		public Region(int height, int width)
+		public ImageRegion(int height, int width)
 		{
 			Height = height;
 			Width = width;
