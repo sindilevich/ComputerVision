@@ -8,12 +8,14 @@ namespace HoleFilling.Models
 		private const int DEFAULT_Z = 3;
 
 		private readonly float m_epsilon;
+		private readonly string m_functionBody;
 		private readonly int m_z;
 		private Func<long, long, float> m_function;
 		private object m_lock = new object();
 
 		public WeightingFunction(string functionBody, int z, float epsilon)
 		{
+			m_functionBody = functionBody;
 			m_z = z < 1 ?
 				DEFAULT_Z :
 				z;
@@ -32,10 +34,7 @@ namespace HoleFilling.Models
 					{
 						if (m_function == null)
 						{
-							m_function = (y, x) =>
-							{
-								return DefaultWeightingFunction(y, x);
-							};
+							m_function = CreateWeightingFunctionDynamically() ?? DefaultWeightingFunction();
 						}
 					}
 				}
@@ -43,24 +42,33 @@ namespace HoleFilling.Models
 			}
 		}
 
-		private float DefaultWeightingFunction(long y, long x)
+		private Func<long, long, float> CreateWeightingFunctionDynamically()
 		{
-			// Per C# specification Math.Pow(0d, 0d) == 1
-			float exponent = (float)Math.Pow(Math.Abs(x - y), m_z);
-			float result = 0f;
+			// TODO: Add magic to convert function body from text to executable code
+			return null;
+		}
 
-			if (float.IsNegativeInfinity(exponent))
+		private Func<long, long, float> DefaultWeightingFunction()
+		{
+			return (y, x) =>
 			{
-				exponent = float.MinValue;
-			}
-			else if (float.IsPositiveInfinity(exponent))
-			{
-				exponent = float.MaxValue;
-			}
-			result = 1f / (exponent + m_epsilon);
-			return result > 1 ?
-				1 :
-				result;
+				// Per C# specification Math.Pow(0d, 0d) == 1
+				float exponent = (float)Math.Pow(Math.Abs(x - y), m_z);
+				float result = 0f;
+
+				if (float.IsNegativeInfinity(exponent))
+				{
+					exponent = float.MinValue;
+				}
+				else if (float.IsPositiveInfinity(exponent))
+				{
+					exponent = float.MaxValue;
+				}
+				result = 1f / (exponent + m_epsilon);
+				return result > 1 ?
+					1 :
+					result;
+			};
 		}
 	}
 }
