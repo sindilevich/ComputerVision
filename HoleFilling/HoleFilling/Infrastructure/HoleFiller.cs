@@ -24,9 +24,28 @@ namespace HoleFilling.Infrastructure
 			}
 		}
 
+		public async Task<Image<Gray, float>> FillHoles(string functionBody, int z, float epsilon)
+		{
+			Image<Gray, float> result = null;
+
+			await Task.Run(() =>
+			{
+				WeightingFunction weightingFunction = new WeightingFunction(functionBody, z, epsilon);
+				result = new Image<Gray, float>(m_normalizedImageMatrix.Cols, m_normalizedImageMatrix.Rows);
+
+				using (Matrix<float> filledImageMatrix = new Matrix<float>(m_normalizedImageMatrix.Rows, m_normalizedImageMatrix.Cols))
+				{
+					m_normalizedImageMatrix.CopyTo(filledImageMatrix);
+					m_missingPixelsService.TryFillHoles(filledImageMatrix, m_boundarySearher, weightingFunction);
+					ImageColors.ScaleUp(filledImageMatrix);
+					filledImageMatrix.CopyTo(result);
+				}
+			});
+			return result;
+		}
+
 		public HoleFiller Initialize(IMissingPixelsService missingPixelsService, IBoundarySearcher boundarySearcher, string imageUri)
 		{
-			Dispose();
 			m_imageUri = imageUri;
 			InitializeBoundarySearcher(boundarySearcher);
 			InitializeMissingPixelsService(missingPixelsService);
@@ -45,7 +64,7 @@ namespace HoleFilling.Infrastructure
 				using (Matrix<float> imageWithMarkedBoundariesMatrix = new Matrix<float>(m_normalizedImageMatrix.Rows, m_normalizedImageMatrix.Cols))
 				{
 					m_normalizedImageMatrix.CopyTo(imageWithMarkedBoundariesMatrix);
-					imageWithMarkedBoundariesMatrix._Mul(ImageColors.WHITE);
+					ImageColors.ScaleUp(imageWithMarkedBoundariesMatrix);
 					m_boundarySearher.TryMarkBoundaryPixels(imageWithMarkedBoundariesMatrix);
 					m_missingPixelsService.TryMarkMissingPixels(imageWithMarkedBoundariesMatrix);
 					imageWithMarkedBoundariesMatrix.CopyTo(result);
@@ -54,12 +73,9 @@ namespace HoleFilling.Infrastructure
 			return result;
 		}
 
-		private float AnalyzePixel(int column, int row, float color)
+		private void AnalyzePixel(int column, int row, float color)
 		{
-			float squeezedColor = SqueezeColorIntoRange(color);
-
-			m_missingPixelsService.TryAddMissingPixel(m_boundarySearher, m_imageRegion, m_normalizedImageMatrix, column, row, squeezedColor);
-			return squeezedColor;
+			m_missingPixelsService.TryAddMissingPixel(m_boundarySearher, m_imageRegion, m_normalizedImageMatrix, column, row, color);
 		}
 
 		private void InitializeBoundarySearcher(IBoundarySearcher boundarySearcher)
@@ -82,22 +98,16 @@ namespace HoleFilling.Infrastructure
 				{
 					float color = m_normalizedImageMatrix.Data[row, column];
 
-					m_normalizedImageMatrix.Data[row, column] = AnalyzePixel(column, row, color);
+					AnalyzePixel(column, row, color);
 				}
 			}
+			ImageColors.ScaleDown(m_normalizedImageMatrix);
 		}
 
 		private void InitializeMissingPixelsService(IMissingPixelsService missingPixelsService)
 		{
 			m_missingPixelsService = missingPixelsService;
 			m_missingPixelsService.Initialize();
-		}
-
-		private float SqueezeColorIntoRange(float color)
-		{
-			return color == ImageColors.WHITE ?
-				ImageColors.INVALID :
-				color /= ImageColors.WHITE;
 		}
 
 		#region IDisposable Support
