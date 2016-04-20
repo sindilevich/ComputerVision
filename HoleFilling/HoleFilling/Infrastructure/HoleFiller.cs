@@ -36,7 +36,7 @@ namespace HoleFilling.Infrastructure
 				{
 					m_normalizedImageMatrix.CopyTo(filledImageMatrix);
 					m_missingPixelsService.TryFillHoles(filledImageMatrix, m_boundarySearher, colorExtrapolator);
-					ImageColorsService.ScaleUp(filledImageMatrix);
+					ImageColorsService.ScaleColorsUp(filledImageMatrix);
 					if (markBoundary)
 					{
 						m_boundarySearher.TryMarkBoundaryPixels(filledImageMatrix);
@@ -67,7 +67,7 @@ namespace HoleFilling.Infrastructure
 				using (Matrix<float> imageWithMarkedBoundariesMatrix = new Matrix<float>(m_normalizedImageMatrix.Rows, m_normalizedImageMatrix.Cols))
 				{
 					m_normalizedImageMatrix.CopyTo(imageWithMarkedBoundariesMatrix);
-					ImageColorsService.ScaleUp(imageWithMarkedBoundariesMatrix);
+					ImageColorsService.ScaleColorsUp(imageWithMarkedBoundariesMatrix);
 					m_boundarySearher.TryMarkBoundaryPixels(imageWithMarkedBoundariesMatrix);
 					m_missingPixelsService.TryMarkMissingPixels(imageWithMarkedBoundariesMatrix);
 					imageWithMarkedBoundariesMatrix.CopyTo(result);
@@ -123,7 +123,7 @@ namespace HoleFilling.Infrastructure
 				image.CopyTo(m_normalizedImageMatrix);
 			}
 			FindBoundaryAndHole();
-			ImageColorsService.ScaleDown(m_normalizedImageMatrix);
+			ImageColorsService.ScaleColorsDown(m_normalizedImageMatrix);
 		}
 
 		private void InitializeMissingPixelsService(IMissingPixelsService missingPixelsService)
