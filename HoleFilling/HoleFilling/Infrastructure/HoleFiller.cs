@@ -72,9 +72,36 @@ namespace HoleFilling.Infrastructure
 			return result;
 		}
 
-		private void AnalyzePixel(int column, int row, float color)
+		private bool AnalyzePixel(int column, int row, float color)
 		{
-			m_missingPixelsService.TryAddMissingPixel(m_boundarySearher, m_imageRegion, m_normalizedImageMatrix, column, row, color);
+			return m_missingPixelsService.TryAddMissingPixel(m_boundarySearher, m_imageRegion, m_normalizedImageMatrix, column, row, color);
+		}
+
+		private void FindBoundaryAndHole()
+		{
+			bool foundHole = false;
+
+			for (int row = 0; row < m_normalizedImageMatrix.Rows; row++)
+			{
+				bool foundHoleInTheRow = false;
+
+				for (int column = 0; column < m_normalizedImageMatrix.Cols; column++)
+				{
+					float color = m_normalizedImageMatrix.Data[row, column];
+
+					foundHoleInTheRow = AnalyzePixel(column, row, color);
+				}
+				// TODO: Heads up, optimization based on fact there is only a single hole in the image
+				if (foundHoleInTheRow)
+				{
+					foundHole = true;
+				}
+				else if (foundHole)
+				{
+					return;
+				}
+				// TODO: Heads up, end of optimization based on fact there is only a single hole in the image
+			}
 		}
 
 		private void InitializeBoundarySearcher(IBoundarySearcher boundarySearcher)
@@ -91,15 +118,7 @@ namespace HoleFilling.Infrastructure
 				m_imageRegion = new ImageRegion(image.Height, image.Width);
 				image.CopyTo(m_normalizedImageMatrix);
 			}
-			for (int row = 0; row < m_normalizedImageMatrix.Rows; row++)
-			{
-				for (int column = 0; column < m_normalizedImageMatrix.Cols; column++)
-				{
-					float color = m_normalizedImageMatrix.Data[row, column];
-
-					AnalyzePixel(column, row, color);
-				}
-			}
+			FindBoundaryAndHole();
 			ImageColorsService.ScaleDown(m_normalizedImageMatrix);
 		}
 

@@ -14,8 +14,10 @@ namespace HoleFilling.Infrastructure
 			m_missingPixels = new List<Pixel>();
 		}
 
-		public void TryAddMissingPixel(IBoundarySearcher boundarySearcher, ImageRegion imageRegion, Matrix<float> normalizedImageMatrix, int column, int row, float color)
+		public bool TryAddMissingPixel(IBoundarySearcher boundarySearcher, ImageRegion imageRegion, Matrix<float> normalizedImageMatrix, int column, int row, float color)
 		{
+			bool foundMissingPixel = false;
+
 			if (color == ImageColorsService.WHITE)
 			{
 				Pixel missing = new Pixel(imageRegion, column, row)
@@ -24,8 +26,10 @@ namespace HoleFilling.Infrastructure
 				};
 
 				m_missingPixels.Add(missing);
+				foundMissingPixel = true;
 				boundarySearcher.TryAddBoundaryPixels(imageRegion, normalizedImageMatrix, column, row);
 			}
+			return foundMissingPixel;
 		}
 
 		public void TryFillHoles(Matrix<float> normalizedImageMatrix, IBoundarySearcher boundarySearcher, ColorExtrapolatorBase colorExtrapolator)
