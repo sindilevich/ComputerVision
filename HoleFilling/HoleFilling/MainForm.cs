@@ -14,7 +14,6 @@ namespace HoleFilling
 		public MainForm()
 		{
 			InitializeComponent();
-			Shown += (sender, e) => openOriginalImageButton.Focus();
 			FormClosing += (sender, e) => m_holeFiller?.Dispose();
 			originalImage.LoadCompleted += async (sender, e) =>
 			{

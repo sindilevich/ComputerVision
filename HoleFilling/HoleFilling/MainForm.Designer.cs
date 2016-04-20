@@ -91,7 +91,7 @@
 			this.originalImageContainer.Location = new System.Drawing.Point(12, 42);
 			this.originalImageContainer.Name = "originalImageContainer";
 			this.originalImageContainer.Size = new System.Drawing.Size(334, 268);
-			this.originalImageContainer.TabIndex = 8;
+			this.originalImageContainer.TabIndex = 10;
 			this.originalImageContainer.TabStop = false;
 			this.originalImageContainer.Text = "Original Image";
 			// 
@@ -102,7 +102,7 @@
 			this.boundariesImageContainer.Location = new System.Drawing.Point(378, 42);
 			this.boundariesImageContainer.Name = "boundariesImageContainer";
 			this.boundariesImageContainer.Size = new System.Drawing.Size(334, 268);
-			this.boundariesImageContainer.TabIndex = 9;
+			this.boundariesImageContainer.TabIndex = 11;
 			this.boundariesImageContainer.TabStop = false;
 			this.boundariesImageContainer.Text = "Boundaries Image";
 			// 
@@ -132,7 +132,7 @@
 			this.naivelyFilledImageContainer.Location = new System.Drawing.Point(18, 329);
 			this.naivelyFilledImageContainer.Name = "naivelyFilledImageContainer";
 			this.naivelyFilledImageContainer.Size = new System.Drawing.Size(334, 268);
-			this.naivelyFilledImageContainer.TabIndex = 10;
+			this.naivelyFilledImageContainer.TabIndex = 12;
 			this.naivelyFilledImageContainer.TabStop = false;
 			this.naivelyFilledImageContainer.Text = "Naively Filled Image";
 			// 
@@ -214,7 +214,7 @@
 			this.fillHolesButton.Location = new System.Drawing.Point(637, 13);
 			this.fillHolesButton.Name = "fillHolesButton";
 			this.fillHolesButton.Size = new System.Drawing.Size(75, 23);
-			this.fillHolesButton.TabIndex = 7;
+			this.fillHolesButton.TabIndex = 9;
 			this.fillHolesButton.Text = "&Fill Holes";
 			this.fillHolesButton.UseVisualStyleBackColor = true;
 			this.fillHolesButton.Click += new System.EventHandler(this.fillHolesButton_Click);
@@ -226,7 +226,7 @@
 			this.approximatelyFilledImageContainer.Location = new System.Drawing.Point(378, 331);
 			this.approximatelyFilledImageContainer.Name = "approximatelyFilledImageContainer";
 			this.approximatelyFilledImageContainer.Size = new System.Drawing.Size(334, 268);
-			this.approximatelyFilledImageContainer.TabIndex = 11;
+			this.approximatelyFilledImageContainer.TabIndex = 13;
 			this.approximatelyFilledImageContainer.TabStop = false;
 			this.approximatelyFilledImageContainer.Text = "Approximately Filled Image";
 			// 
@@ -254,7 +254,7 @@
 			this.boundaryPixelsSampleSizeTextbox.Location = new System.Drawing.Point(594, 14);
 			this.boundaryPixelsSampleSizeTextbox.Name = "boundaryPixelsSampleSizeTextbox";
 			this.boundaryPixelsSampleSizeTextbox.Size = new System.Drawing.Size(30, 20);
-			this.boundaryPixelsSampleSizeTextbox.TabIndex = 13;
+			this.boundaryPixelsSampleSizeTextbox.TabIndex = 8;
 			this.boundaryPixelsSampleSizeTextbox.Text = "100";
 			// 
 			// boundaryPixelsSampleSizeLabel
@@ -263,12 +263,13 @@
 			this.boundaryPixelsSampleSizeLabel.Location = new System.Drawing.Point(573, 18);
 			this.boundaryPixelsSampleSizeLabel.Name = "boundaryPixelsSampleSizeLabel";
 			this.boundaryPixelsSampleSizeLabel.Size = new System.Drawing.Size(16, 13);
-			this.boundaryPixelsSampleSizeLabel.TabIndex = 12;
+			this.boundaryPixelsSampleSizeLabel.TabIndex = 7;
 			this.boundaryPixelsSampleSizeLabel.Text = "k:";
 			this.sharedTooltipService.SetToolTip(this.boundaryPixelsSampleSizeLabel, "Boundary pixels sample size");
 			// 
 			// MainForm
 			// 
+			this.AcceptButton = this.openOriginalImageButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(724, 611);
