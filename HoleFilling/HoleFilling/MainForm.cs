@@ -67,6 +67,11 @@ namespace HoleFilling
 			fillHolesButton.Enabled = false;
 		}
 
+		private void ExtractVisualizationProperties(out bool markBoundary)
+		{
+			markBoundary = markBoundaryOnFilledImages.Checked;
+		}
+
 		private string ExtractWeightingFunctionProperties(out int z, out float epsilon, out int boundaryPixelsSampleSize)
 		{
 			z = 0;
@@ -84,13 +89,15 @@ namespace HoleFilling
 			int z = 0;
 			float epsilon = 0f;
 			int boundaryPixelsSampleSize = 0;
+			bool markBoundary = false;
 			ColorExtrapolatorBase colorExtrapolator = null;
 
 			ActOnPreFillingHoles();
 			functionBody = ExtractWeightingFunctionProperties(out z, out epsilon, out boundaryPixelsSampleSize);
+			ExtractVisualizationProperties(out markBoundary);
 			colorExtrapolator = new NaiveColorExtrapolator(
 				weightingFunction: new WeightingFunction(functionBody, z, epsilon));
-			using (Image<Gray, float> imageWithFilledHoles = await m_holeFiller.FillHoles(colorExtrapolator))
+			using (Image<Gray, float> imageWithFilledHoles = await m_holeFiller.FillHoles(colorExtrapolator, markBoundary))
 			{
 				if (imageWithFilledHoles != null)
 				{
@@ -100,7 +107,7 @@ namespace HoleFilling
 			colorExtrapolator = new ApproximateColorEtrapolator(
 				weightingFunction: new WeightingFunction(functionBody, z, epsilon),
 				boundaryPixelsSampleSize: boundaryPixelsSampleSize);
-			using (Image<Gray, float> imageWithFilledHoles = await m_holeFiller.FillHoles(colorExtrapolator))
+			using (Image<Gray, float> imageWithFilledHoles = await m_holeFiller.FillHoles(colorExtrapolator, markBoundary))
 			{
 				if (imageWithFilledHoles != null)
 				{

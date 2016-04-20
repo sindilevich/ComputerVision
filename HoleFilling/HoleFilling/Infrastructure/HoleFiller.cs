@@ -24,7 +24,7 @@ namespace HoleFilling.Infrastructure
 			}
 		}
 
-		public async Task<Image<Gray, float>> FillHoles(ColorExtrapolatorBase colorExtrapolator)
+		public async Task<Image<Gray, float>> FillHoles(ColorExtrapolatorBase colorExtrapolator, bool markBoundary)
 		{
 			Image<Gray, float> result = null;
 
@@ -37,6 +37,10 @@ namespace HoleFilling.Infrastructure
 					m_normalizedImageMatrix.CopyTo(filledImageMatrix);
 					m_missingPixelsService.TryFillHoles(filledImageMatrix, m_boundarySearher, colorExtrapolator);
 					ImageColorsService.ScaleUp(filledImageMatrix);
+					if (markBoundary)
+					{
+						m_boundarySearher.TryMarkBoundaryPixels(filledImageMatrix);
+					}
 					filledImageMatrix.CopyTo(result);
 				}
 			});
