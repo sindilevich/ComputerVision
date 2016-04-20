@@ -24,20 +24,19 @@ namespace HoleFilling.Infrastructure
 			}
 		}
 
-		public async Task<Image<Gray, float>> FillHoles(string functionBody, int z, float epsilon)
+		public async Task<Image<Gray, float>> FillHoles(ColorExtrapolatorBase colorExtrapolator)
 		{
 			Image<Gray, float> result = null;
 
 			await Task.Run(() =>
 			{
-				WeightingFunction weightingFunction = new WeightingFunction(functionBody, z, epsilon);
 				result = new Image<Gray, float>(m_normalizedImageMatrix.Cols, m_normalizedImageMatrix.Rows);
 
 				using (Matrix<float> filledImageMatrix = new Matrix<float>(m_normalizedImageMatrix.Rows, m_normalizedImageMatrix.Cols))
 				{
 					m_normalizedImageMatrix.CopyTo(filledImageMatrix);
-					m_missingPixelsService.TryFillHoles(filledImageMatrix, m_boundarySearher, weightingFunction);
-					ImageColors.ScaleUp(filledImageMatrix);
+					m_missingPixelsService.TryFillHoles(filledImageMatrix, m_boundarySearher, colorExtrapolator);
+					ImageColorsService.ScaleUp(filledImageMatrix);
 					filledImageMatrix.CopyTo(result);
 				}
 			});
@@ -64,7 +63,7 @@ namespace HoleFilling.Infrastructure
 				using (Matrix<float> imageWithMarkedBoundariesMatrix = new Matrix<float>(m_normalizedImageMatrix.Rows, m_normalizedImageMatrix.Cols))
 				{
 					m_normalizedImageMatrix.CopyTo(imageWithMarkedBoundariesMatrix);
-					ImageColors.ScaleUp(imageWithMarkedBoundariesMatrix);
+					ImageColorsService.ScaleUp(imageWithMarkedBoundariesMatrix);
 					m_boundarySearher.TryMarkBoundaryPixels(imageWithMarkedBoundariesMatrix);
 					m_missingPixelsService.TryMarkMissingPixels(imageWithMarkedBoundariesMatrix);
 					imageWithMarkedBoundariesMatrix.CopyTo(result);
@@ -101,7 +100,7 @@ namespace HoleFilling.Infrastructure
 					AnalyzePixel(column, row, color);
 				}
 			}
-			ImageColors.ScaleDown(m_normalizedImageMatrix);
+			ImageColorsService.ScaleDown(m_normalizedImageMatrix);
 		}
 
 		private void InitializeMissingPixelsService(IMissingPixelsService missingPixelsService)

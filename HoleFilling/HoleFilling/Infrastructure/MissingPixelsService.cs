@@ -16,7 +16,7 @@ namespace HoleFilling.Infrastructure
 
 		public void TryAddMissingPixel(IBoundarySearcher boundarySearcher, ImageRegion imageRegion, Matrix<float> normalizedImageMatrix, int column, int row, float color)
 		{
-			if (color == ImageColors.WHITE)
+			if (color == ImageColorsService.WHITE)
 			{
 				Pixel missing = new Pixel(imageRegion, column, row)
 				{
@@ -28,23 +28,11 @@ namespace HoleFilling.Infrastructure
 			}
 		}
 
-		public void TryFillHoles(Matrix<float> normalizedImageMatrix, IBoundarySearcher boundarySearcher, WeightingFunction weightingFunction)
+		public void TryFillHoles(Matrix<float> normalizedImageMatrix, IBoundarySearcher boundarySearcher, ColorExtrapolatorBase colorExtrapolator)
 		{
 			m_missingPixels.All(missingPixel =>
 			{
-				float numerator = 0f;
-				float denominator = 0f;
-
-				boundarySearcher.BoundaryPixels//.Take(5)
-					.All(boundaryPixel =>
-					{
-						float weight = weightingFunction.Calculate(boundaryPixel.DirectLocation, missingPixel.DirectLocation);
-
-						numerator += (weight * boundaryPixel.Color);
-						denominator += weight;
-						return true;
-					});
-				normalizedImageMatrix[missingPixel.Row, missingPixel.Column] = numerator / denominator;
+				normalizedImageMatrix[missingPixel.Row, missingPixel.Column] = ImageColorsService.ExtrapolateColor(missingPixel, boundarySearcher.BoundaryPixels, colorExtrapolator);
 				return true;
 			});
 		}
@@ -53,7 +41,7 @@ namespace HoleFilling.Infrastructure
 		{
 			m_missingPixels.All(missingPixel =>
 			{
-				imageMatrix[missingPixel.Row, missingPixel.Column] = ImageColors.WHITE;
+				imageMatrix[missingPixel.Row, missingPixel.Column] = ImageColorsService.WHITE;
 				return true;
 			});
 		}

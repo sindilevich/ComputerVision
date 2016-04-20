@@ -37,7 +37,7 @@ namespace HoleFilling.Infrastructure
 							{
 								float boundaryColor = normalizedImageMatrix.Data[neighborRow, neighborColumn];
 
-								if (boundaryColor != ImageColors.WHITE)
+								if (boundaryColor != ImageColorsService.WHITE)
 								{
 									boundaryPixel.Color = boundaryColor;
 									BoundaryPixels.Add(boundaryPixel);
@@ -53,7 +53,7 @@ namespace HoleFilling.Infrastructure
 		{
 			BoundaryPixels.All(boundaryPixel =>
 			{
-				imageMatrix[boundaryPixel.Row, boundaryPixel.Column] = ImageColors.BLACK;
+				imageMatrix[boundaryPixel.Row, boundaryPixel.Column] = ImageColorsService.BLACK;
 				return true;
 			});
 		}

@@ -1,12 +1,19 @@
-﻿using Emgu.CV;
+﻿using System.Collections.Generic;
+using Emgu.CV;
+using HoleFilling.Models;
 
 namespace HoleFilling.Infrastructure
 {
-	internal class ImageColors
+	internal class ImageColorsService
 	{
 		public const float BLACK = 0f;
 		public const float WHITE = 255;
 		private const float INVALID = -1f;
+
+		public static float ExtrapolateColor(Pixel missingPixel, IList<Pixel> boundaryPixels, ColorExtrapolatorBase colorExtrapolator)
+		{
+			return colorExtrapolator.ExtrapolateColor(missingPixel, boundaryPixels);
+		}
 
 		public static float ScaleDown(float color)
 		{

@@ -10,7 +10,7 @@ namespace HoleFilling.Infrastructure
 
 		void TryAddMissingPixel(IBoundarySearcher boundarySearcher, ImageRegion imageRegion, Matrix<float> normalizedImageMatrix, int column, int row, float color);
 
-		void TryFillHoles(Matrix<float> normalizedImageMatrix, IBoundarySearcher boundarySearcher, WeightingFunction weightingFunction);
+		void TryFillHoles(Matrix<float> normalizedImageMatrix, IBoundarySearcher boundarySearcher, ColorExtrapolatorBase colorExtrapolator);
 
 		void TryMarkMissingPixels(Matrix<float> imageMatrix);
 	}

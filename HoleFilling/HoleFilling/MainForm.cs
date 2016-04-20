@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using HoleFilling.Infrastructure;
+using HoleFilling.Models;
 
 namespace HoleFilling
 {
@@ -14,7 +15,7 @@ namespace HoleFilling
 		{
 			InitializeComponent();
 			Shown += (sender, e) => openOriginalImageButton.Focus();
-			FormClosing += (sender, e) => m_holeFiller.Dispose();
+			FormClosing += (sender, e) => m_holeFiller?.Dispose();
 			originalImage.LoadCompleted += async (sender, e) =>
 			{
 				m_holeFiller?.Dispose();
@@ -24,19 +25,57 @@ namespace HoleFilling
 					if (imageWithMarkedBoundaries != null)
 					{
 						boundariesImage.Image = imageWithMarkedBoundaries;
-						boundariesImageIndicatorLabel.Visible = false;
-						fillHolesButton.Enabled = true;
+						ActOnPostImageLoaded();
 					}
 				}
 			};
 		}
 
-		private string ExtractWeightingFunctionProperties(out int z, out float epsilon)
+		private void ActOnPostApproximateFillingHoles(Image<Gray, float> imageWithFilledHoles)
+		{
+			approximatelyFilledImage.Image = imageWithFilledHoles;
+			approximatelyFilledImageIndicatorLabel.Visible = false;
+		}
+
+		private void ActOnPostImageLoaded()
+		{
+			boundariesImageIndicatorLabel.Visible = false;
+			fillHolesButton.Enabled = true;
+		}
+
+		private void ActOnPostNaiveFillingHoles(Image<Gray, float> imageWithFilledHoles)
+		{
+			naivelyFilledImage.Image = imageWithFilledHoles;
+			naivelyFilledImageIndicatorLabel.Visible = false;
+			approximatelyFilledImageIndicatorLabel.Text = "Calculating…";
+		}
+
+		private void ActOnPreFillingHoles()
+		{
+			naivelyFilledImage.Image = null;
+			approximatelyFilledImage.Image = null;
+			naivelyFilledImageIndicatorLabel.Visible = true;
+			approximatelyFilledImageIndicatorLabel.Text = "Waiting…";
+			approximatelyFilledImageIndicatorLabel.Visible = true;
+		}
+
+		private void ActOnPreImageLoaded()
+		{
+			boundariesImageIndicatorLabel.Visible = true;
+			boundariesImage.Image = null;
+			naivelyFilledImage.Image = null;
+			approximatelyFilledImage.Image = null;
+			fillHolesButton.Enabled = false;
+		}
+
+		private string ExtractWeightingFunctionProperties(out int z, out float epsilon, out int boundaryPixelsSampleSize)
 		{
 			z = 0;
 			epsilon = 0f;
+			boundaryPixelsSampleSize = 0;
 			int.TryParse(zTextbox.Text, out z);
 			float.TryParse(epsilonTextbox.Text, out epsilon);
+			int.TryParse(boundaryPixelsSampleSizeTextbox.Text, out boundaryPixelsSampleSize);
 			return weightingFunctionTextbox.Text;
 		}
 
@@ -45,16 +84,28 @@ namespace HoleFilling
 			string functionBody = string.Empty;
 			int z = 0;
 			float epsilon = 0f;
+			int boundaryPixelsSampleSize = 0;
+			ColorExtrapolatorBase colorExtrapolator = null;
 
-			filledImage.Image = null;
-			filledImageIndicatorLabel.Visible = true;
-			functionBody = ExtractWeightingFunctionProperties(out z, out epsilon);
-			using (Image<Gray, float> imageWithFilledHoles = await m_holeFiller.FillHoles(functionBody, z, epsilon))
+			ActOnPreFillingHoles();
+			functionBody = ExtractWeightingFunctionProperties(out z, out epsilon, out boundaryPixelsSampleSize);
+			colorExtrapolator = new NaiveColorExtrapolator(
+				weightingFunction: new WeightingFunction(functionBody, z, epsilon));
+			using (Image<Gray, float> imageWithFilledHoles = await m_holeFiller.FillHoles(colorExtrapolator))
 			{
 				if (imageWithFilledHoles != null)
 				{
-					filledImage.Image = imageWithFilledHoles;
-					filledImageIndicatorLabel.Visible = false;
+					ActOnPostNaiveFillingHoles(imageWithFilledHoles);
+				}
+			}
+			colorExtrapolator = new ApproximateColorEtrapolator(
+				weightingFunction: new WeightingFunction(functionBody, z, epsilon),
+				boundaryPixelsSampleSize: boundaryPixelsSampleSize);
+			using (Image<Gray, float> imageWithFilledHoles = await m_holeFiller.FillHoles(colorExtrapolator))
+			{
+				if (imageWithFilledHoles != null)
+				{
+					ActOnPostApproximateFillingHoles(imageWithFilledHoles);
 				}
 			}
 		}
@@ -63,10 +114,7 @@ namespace HoleFilling
 		{
 			if (originalImageOpener.ShowDialog() == DialogResult.OK)
 			{
-				boundariesImageIndicatorLabel.Visible = true;
-				boundariesImage.Image = null;
-				filledImage.Image = null;
-				fillHolesButton.Enabled = false;
+				ActOnPreImageLoaded();
 				originalImage.ImageLocation = originalImageOpener.FileName;
 			}
 		}

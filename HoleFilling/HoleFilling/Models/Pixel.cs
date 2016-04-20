@@ -21,7 +21,7 @@ namespace HoleFilling.Models
 			}
 			set
 			{
-				m_color = ImageColors.ScaleDown(value);
+				m_color = ImageColorsService.ScaleDown(value);
 			}
 		}
 

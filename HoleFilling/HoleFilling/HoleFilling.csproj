@@ -56,12 +56,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\ApproximateColorEtrapolator.cs" />
     <Compile Include="Infrastructure\BoundarySearcher.cs" />
+    <Compile Include="Infrastructure\EnumerableExtensions.cs" />
+    <Compile Include="Infrastructure\ColorExtrapolatorBase.cs" />
     <Compile Include="Infrastructure\HoleFiller.cs" />
     <Compile Include="Infrastructure\IBoundarySearcher.cs" />
-    <Compile Include="Infrastructure\ImageColors.cs" />
+    <Compile Include="Infrastructure\ImageColorsService.cs" />
     <Compile Include="Infrastructure\IMissingPixelsService.cs" />
     <Compile Include="Infrastructure\MissingPixelsService.cs" />
+    <Compile Include="Infrastructure\NaiveColorExtrapolator.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
