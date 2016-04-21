@@ -1,26 +1,41 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using HoleFilling.Infrastructure;
+using HoleFilling.Infrastructure.Logging;
 using HoleFilling.Models;
 
 namespace HoleFilling
 {
 	public partial class MainForm : Form
 	{
+		private readonly Stopwatch m_stopwatch;
 		private HoleFiller m_holeFiller;
 
 		public MainForm()
 		{
 			InitializeComponent();
+			m_stopwatch = new Stopwatch();
+
 			FormClosing += (sender, e) => m_holeFiller?.Dispose();
 			originalImage.LoadCompleted += async (sender, e) =>
 			{
+				LoggingTask logger = null;
+
 				m_holeFiller?.Dispose();
+				logger = LoggingTask.Start(LoggingTaskType.FindHolesAndBoundaries, "Finding holes and their boundaries");
+
 				m_holeFiller = HoleFiller.Current.Initialize(new MissingPixelsService(), new BoundarySearcher(), originalImage.ImageLocation);
+
+				logger.Finish();
+				logger = LoggingTask.Start(LoggingTaskType.MarkBoundary, "Marking holes boundaries");
+
 				using (Image<Gray, float> imageWithMarkedBoundaries = await m_holeFiller.MarkBoundaries())
 				{
+					logger.Finish();
+
 					if (imageWithMarkedBoundaries != null)
 					{
 						boundariesImage.Image = imageWithMarkedBoundaries;
@@ -91,14 +106,20 @@ namespace HoleFilling
 			int boundaryPixelsSampleSize = 0;
 			bool markBoundary = false;
 			ColorExtrapolatorBase colorExtrapolator = null;
+			LoggingTask logger = null;
 
 			ActOnPreFillingHoles();
 			functionBody = ExtractWeightingFunctionProperties(out z, out epsilon, out boundaryPixelsSampleSize);
 			ExtractVisualizationProperties(out markBoundary);
 			colorExtrapolator = new NaiveColorExtrapolator(
 				weightingFunction: new WeightingFunction(functionBody, z, epsilon));
+
+			logger = LoggingTask.Start(LoggingTaskType.FillHoles, "Naively filling holes");
+
 			using (Image<Gray, float> imageWithFilledHoles = await m_holeFiller.FillHoles(colorExtrapolator, markBoundary))
 			{
+				logger.Finish();
+
 				if (imageWithFilledHoles != null)
 				{
 					ActOnPostNaiveFillingHoles(imageWithFilledHoles);
@@ -107,8 +128,13 @@ namespace HoleFilling
 			colorExtrapolator = new ApproximateColorEtrapolator(
 				weightingFunction: new WeightingFunction(functionBody, z, epsilon),
 				boundaryPixelsSampleSize: boundaryPixelsSampleSize);
+
+			logger = LoggingTask.Start(LoggingTaskType.FillHoles, "Approximately filling holes");
+
 			using (Image<Gray, float> imageWithFilledHoles = await m_holeFiller.FillHoles(colorExtrapolator, markBoundary))
 			{
+				logger.Finish();
+
 				if (imageWithFilledHoles != null)
 				{
 					ActOnPostApproximateFillingHoles(imageWithFilledHoles);

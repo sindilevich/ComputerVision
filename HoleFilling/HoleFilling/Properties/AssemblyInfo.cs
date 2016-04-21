@@ -1,6 +1,7 @@
 ﻿using System.Configuration.Assemblies;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using log4net.Config;
 
 [assembly: AssemblyTitle("Hole Filling Exercise")]
 [assembly: AssemblyDescription("Hole Filling Exercise")]
@@ -16,3 +17,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0")]
 [assembly: AssemblyInformationalVersion("1.0")]
 [assembly: AssemblyAlgorithmId(AssemblyHashAlgorithm.SHA512)]
+[assembly: XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]

@@ -81,7 +81,7 @@ namespace HoleFilling.Infrastructure
 			return m_missingPixelsService.TryAddMissingPixel(m_boundarySearher, m_imageRegion, m_normalizedImageMatrix, column, row, color);
 		}
 
-		private void FindBoundaryAndHole()
+		private void FindHolesAndBoundaries()
 		{
 			bool foundHole = false;
 
@@ -122,7 +122,7 @@ namespace HoleFilling.Infrastructure
 				m_imageRegion = new ImageRegion(image.Height, image.Width);
 				image.CopyTo(m_normalizedImageMatrix);
 			}
-			FindBoundaryAndHole();
+			FindHolesAndBoundaries();
 			ImageColorsService.ScaleColorsDown(m_normalizedImageMatrix);
 		}
 

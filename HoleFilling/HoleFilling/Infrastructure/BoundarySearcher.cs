@@ -91,8 +91,10 @@ namespace HoleFilling.Infrastructure
 			{
 				if (disposing)
 				{
+					m_neighborsMatrix?.Dispose();
 					BoundaryPixels?.Clear();
 				}
+				m_neighborsMatrix = null;
 				BoundaryPixels = null;
 				disposedValue = true;
 			}
