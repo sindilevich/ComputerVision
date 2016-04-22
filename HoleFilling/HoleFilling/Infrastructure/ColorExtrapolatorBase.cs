@@ -12,6 +12,6 @@ namespace HoleFilling.Infrastructure
 
 		protected WeightingFunction WeightingFunction { get; private set; }
 
-		public abstract float ExtrapolateColor(Pixel missingPixel, IList<Pixel> boundaryPixels);
+		public abstract float ExtrapolateColor(Pixel missingPixel, ICollection<Pixel> boundaryPixels);
 	}
 }

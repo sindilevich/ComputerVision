@@ -18,7 +18,7 @@ namespace HoleFilling.Infrastructure
 		/// <param name="boundaryPixels">Set of boundary pixels.</param>
 		/// <param name="colorExtrapolator">Color extrapolation algorithm.</param>
 		/// <returns></returns>
-		public static float ExtrapolateColor(Pixel missingPixel, IList<Pixel> boundaryPixels, ColorExtrapolatorBase colorExtrapolator)
+		public static float ExtrapolateColor(Pixel missingPixel, ICollection<Pixel> boundaryPixels, ColorExtrapolatorBase colorExtrapolator)
 		{
 			return colorExtrapolator.ExtrapolateColor(missingPixel, boundaryPixels);
 		}

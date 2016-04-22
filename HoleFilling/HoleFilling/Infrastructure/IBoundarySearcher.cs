@@ -7,7 +7,7 @@ namespace HoleFilling.Infrastructure
 {
 	internal interface IBoundarySearcher : IDisposable
 	{
-		IList<Pixel> BoundaryPixels { get; }
+		ICollection<Pixel> BoundaryPixels { get; }
 
 		void Initialize();
 

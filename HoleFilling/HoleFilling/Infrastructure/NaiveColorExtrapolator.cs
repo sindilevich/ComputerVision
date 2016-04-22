@@ -10,7 +10,7 @@ namespace HoleFilling.Infrastructure
 		{
 		}
 
-		public override float ExtrapolateColor(Pixel missingPixel, IList<Pixel> boundaryPixels)
+		public override float ExtrapolateColor(Pixel missingPixel, ICollection<Pixel> boundaryPixels)
 		{
 			float numerator = 0f;
 			float denominator = 0f;

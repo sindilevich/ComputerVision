@@ -30,5 +30,24 @@ namespace HoleFilling.Models
 		public long DirectLocation { get; private set; }
 
 		public int Row { get; private set; }
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+			{
+				return false;
+			}
+
+			Pixel p = obj as Pixel;
+
+			return p != null &&
+				DirectLocation == p.DirectLocation &&
+				Color == p.Color;
+		}
+
+		public override int GetHashCode()
+		{
+			return new { Color, Column, DirectLocation, Row }.GetHashCode();
+		}
 	}
 }

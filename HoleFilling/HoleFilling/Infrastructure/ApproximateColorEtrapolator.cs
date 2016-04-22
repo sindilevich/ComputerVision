@@ -13,7 +13,7 @@ namespace HoleFilling.Infrastructure
 			m_boundaryPixelsSampleSize = boundaryPixelsSampleSize;
 		}
 
-		public override float ExtrapolateColor(Pixel missingPixel, IList<Pixel> boundaryPixels)
+		public override float ExtrapolateColor(Pixel missingPixel, ICollection<Pixel> boundaryPixels)
 		{
 			float numerator = 0f;
 			float denominator = 0f;
@@ -30,7 +30,7 @@ namespace HoleFilling.Infrastructure
 			return numerator / denominator;
 		}
 
-		private IList<Pixel> GetRandomSubset(IList<Pixel> set)
+		private ICollection<Pixel> GetRandomSubset(ICollection<Pixel> set)
 		{
 			return set
 				.Shuffle()

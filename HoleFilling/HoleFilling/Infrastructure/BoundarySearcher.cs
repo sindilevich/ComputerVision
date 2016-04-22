@@ -9,7 +9,7 @@ namespace HoleFilling.Infrastructure
 	{
 		private Matrix<int> m_neighborsMatrix = new Matrix<int>(2, 3);
 
-		public IList<Pixel> BoundaryPixels { get; private set; }
+		public ICollection<Pixel> BoundaryPixels { get; private set; }
 
 		public void Initialize()
 		{
@@ -62,7 +62,7 @@ namespace HoleFilling.Infrastructure
 		{
 			if (BoundaryPixels == null)
 			{
-				BoundaryPixels = new List<Pixel>();
+				BoundaryPixels = new HashSet<Pixel>();
 			}
 			BoundaryPixels.Clear();
 		}
