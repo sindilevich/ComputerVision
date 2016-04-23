@@ -33,7 +33,7 @@ namespace HoleFilling.Infrastructure
 							int neighborRow = currentNeighbors.Data[1, j];
 							Pixel boundaryPixel = new Pixel(imageRegion, neighborColumn, neighborRow);
 
-							if (imageRegion.PixelWithinRegion(boundaryPixel))
+							if (imageRegion.PixelWithinRegion(boundaryPixel.Column, boundaryPixel.Row))
 							{
 								float boundaryColor = normalizedImageMatrix.Data[neighborRow, neighborColumn];
 

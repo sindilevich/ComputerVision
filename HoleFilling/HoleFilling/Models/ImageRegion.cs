@@ -12,10 +12,15 @@
 
 		public int Width { get; private set; }
 
-		public bool PixelWithinRegion(Pixel pixel)
+		public long GetPixelDirectLocation(int column, int row)
 		{
-			return (pixel.Column >= 0 && pixel.Column < Width)
-				&& (pixel.Row >= 0 && pixel.Row < Height);
+			return (long)row * Width + column;
+		}
+
+		public bool PixelWithinRegion(int column, int row)
+		{
+			return (column >= 0 && column < Width)
+				&& (row >= 0 && row < Height);
 		}
 	}
 }

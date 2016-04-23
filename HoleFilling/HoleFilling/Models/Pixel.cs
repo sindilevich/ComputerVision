@@ -10,7 +10,7 @@ namespace HoleFilling.Models
 		{
 			Column = column;
 			Row = row;
-			DirectLocation = (long)Row * imageRegion.Width + Column;
+			DirectLocation = imageRegion.GetPixelDirectLocation(Column, Row);
 		}
 
 		public float Color
