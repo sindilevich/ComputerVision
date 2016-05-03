@@ -102,10 +102,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Infrastructure\ApproximateColorEtrapolator.cs" />
+    <Compile Include="Infrastructure\ApproximateColorInterpolator.cs" />
     <Compile Include="Infrastructure\BoundarySearcher.cs" />
     <Compile Include="Infrastructure\EnumerableExtensions.cs" />
-    <Compile Include="Infrastructure\ColorExtrapolatorBase.cs" />
+    <Compile Include="Infrastructure\ColorInterpolatorBase.cs" />
     <Compile Include="Infrastructure\HoleFiller.cs" />
     <Compile Include="Infrastructure\IBoundarySearcher.cs" />
     <Compile Include="Infrastructure\ImageColorsService.cs" />
@@ -113,7 +113,7 @@
     <Compile Include="Infrastructure\Logging\LoggingTask.cs" />
     <Compile Include="Infrastructure\Logging\LoggingTaskType.cs" />
     <Compile Include="Infrastructure\MissingPixelsService.cs" />
-    <Compile Include="Infrastructure\NaiveColorExtrapolator.cs" />
+    <Compile Include="Infrastructure\NaiveColorInterpolator.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

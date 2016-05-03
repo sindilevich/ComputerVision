@@ -4,16 +4,16 @@ using HoleFilling.Models;
 
 namespace HoleFilling.Infrastructure
 {
-	internal class ApproximateColorEtrapolator : ColorExtrapolatorBase
+	internal class ApproximateColorInterpolator : ColorInterpolatorBase
 	{
 		private readonly int m_boundaryPixelsSampleSize;
 
-		public ApproximateColorEtrapolator(WeightingFunction weightingFunction, int boundaryPixelsSampleSize) : base(weightingFunction)
+		public ApproximateColorInterpolator(WeightingFunction weightingFunction, int boundaryPixelsSampleSize) : base(weightingFunction)
 		{
 			m_boundaryPixelsSampleSize = boundaryPixelsSampleSize;
 		}
 
-		public override float ExtrapolateColor(Pixel missingPixel, ICollection<Pixel> boundaryPixels)
+		public override float InterpolateColor(Pixel missingPixel, ICollection<Pixel> boundaryPixels)
 		{
 			float numerator = 0f;
 			float denominator = 0f;

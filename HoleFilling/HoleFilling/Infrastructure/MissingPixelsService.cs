@@ -32,11 +32,11 @@ namespace HoleFilling.Infrastructure
 			return foundMissingPixel;
 		}
 
-		public void TryFillHoles(Matrix<float> normalizedImageMatrix, IBoundarySearcher boundarySearcher, ColorExtrapolatorBase colorExtrapolator)
+		public void TryFillHoles(Matrix<float> normalizedImageMatrix, IBoundarySearcher boundarySearcher, ColorInterpolatorBase colorInterpolator)
 		{
 			m_missingPixels.All(missingPixel =>
 			{
-				normalizedImageMatrix[missingPixel.Row, missingPixel.Column] = ImageColorsService.ExtrapolateColor(missingPixel, boundarySearcher.BoundaryPixels, colorExtrapolator);
+				normalizedImageMatrix[missingPixel.Row, missingPixel.Column] = ImageColorsService.InterpolateColor(missingPixel, boundarySearcher.BoundaryPixels, colorInterpolator);
 				return true;
 			});
 		}

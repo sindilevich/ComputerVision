@@ -4,13 +4,13 @@ using HoleFilling.Models;
 
 namespace HoleFilling.Infrastructure
 {
-	internal class NaiveColorExtrapolator : ColorExtrapolatorBase
+	internal class NaiveColorInterpolator : ColorInterpolatorBase
 	{
-		public NaiveColorExtrapolator(WeightingFunction weightingFunction) : base(weightingFunction)
+		public NaiveColorInterpolator(WeightingFunction weightingFunction) : base(weightingFunction)
 		{
 		}
 
-		public override float ExtrapolateColor(Pixel missingPixel, ICollection<Pixel> boundaryPixels)
+		public override float InterpolateColor(Pixel missingPixel, ICollection<Pixel> boundaryPixels)
 		{
 			float numerator = 0f;
 			float denominator = 0f;

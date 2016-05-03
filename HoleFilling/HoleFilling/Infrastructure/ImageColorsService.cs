@@ -11,16 +11,16 @@ namespace HoleFilling.Infrastructure
 		private const float INVALID = -1f;
 
 		/// <summary>
-		/// Extrapolates color value for a missing pixel <paramref name="x"/> using the set of boundary pixels <paramref name="y"/>,
-		/// according to the <paramref name="colorExtrapolator"/> algorithm.
+		/// Interpolates color value for a missing pixel <paramref name="x"/> using the set of boundary pixels <paramref name="y"/>,
+		/// according to the <paramref name="colorInterpolator"/> algorithm.
 		/// </summary>
 		/// <param name="missingPixel">Pixel that missing color in the image.</param>
 		/// <param name="boundaryPixels">Set of boundary pixels.</param>
-		/// <param name="colorExtrapolator">Color extrapolation algorithm.</param>
+		/// <param name="colorInterpolator">Color interpolation algorithm.</param>
 		/// <returns></returns>
-		public static float ExtrapolateColor(Pixel missingPixel, ICollection<Pixel> boundaryPixels, ColorExtrapolatorBase colorExtrapolator)
+		public static float InterpolateColor(Pixel missingPixel, ICollection<Pixel> boundaryPixels, ColorInterpolatorBase colorInterpolator)
 		{
-			return colorExtrapolator.ExtrapolateColor(missingPixel, boundaryPixels);
+			return colorInterpolator.InterpolateColor(missingPixel, boundaryPixels);
 		}
 
 		/// <summary>
