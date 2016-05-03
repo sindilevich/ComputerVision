@@ -11,7 +11,6 @@ namespace HoleFilling.Infrastructure
 		private static Lazy<HoleFiller> m_instance = new Lazy<HoleFiller>();
 
 		private IBoundarySearcher m_boundarySearher;
-		private ImageRegion m_imageRegion;
 		private string m_imageUri;
 		private IMissingPixelsService m_missingPixelsService;
 		private Matrix<float> m_normalizedImageMatrix;
@@ -23,6 +22,8 @@ namespace HoleFilling.Infrastructure
 				return m_instance.Value;
 			}
 		}
+
+		public ImageRegion ImageRegion { get; private set; }
 
 		public async Task<Image<Gray, float>> FillHoles(ColorInterpolatorBase colorInterpolator, bool markBoundary)
 		{
@@ -78,7 +79,7 @@ namespace HoleFilling.Infrastructure
 
 		private bool AnalyzePixel(int column, int row, float color)
 		{
-			return m_missingPixelsService.TryAddMissingPixel(m_boundarySearher, m_imageRegion, m_normalizedImageMatrix, column, row, color);
+			return m_missingPixelsService.TryAddMissingPixel(m_boundarySearher, ImageRegion, m_normalizedImageMatrix, column, row, color);
 		}
 
 		private void FindHolesAndBoundaries()
@@ -119,7 +120,7 @@ namespace HoleFilling.Infrastructure
 			using (Image<Gray, float> image = new Image<Gray, float>(m_imageUri))
 			{
 				m_normalizedImageMatrix = new Matrix<float>(image.Height, image.Width);
-				m_imageRegion = new ImageRegion(image.Height, image.Width);
+				ImageRegion = new ImageRegion(image.Height, image.Width);
 				image.CopyTo(m_normalizedImageMatrix);
 			}
 			FindHolesAndBoundaries();

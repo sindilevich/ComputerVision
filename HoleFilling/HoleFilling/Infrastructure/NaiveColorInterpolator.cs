@@ -18,7 +18,7 @@ namespace HoleFilling.Infrastructure
 			boundaryPixels
 				.All(boundaryPixel =>
 				{
-					float weight = WeightingFunction.Calculate(boundaryPixel.DirectLocation, missingPixel.DirectLocation);
+					float weight = WeightingFunction.Calculate(boundaryPixel, missingPixel);
 
 					numerator += (weight * boundaryPixel.Color);
 					denominator += weight;

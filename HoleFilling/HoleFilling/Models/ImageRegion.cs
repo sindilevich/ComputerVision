@@ -1,4 +1,6 @@
-﻿namespace HoleFilling.Models
+﻿using System;
+
+namespace HoleFilling.Models
 {
 	public class ImageRegion
 	{
@@ -12,9 +14,9 @@
 
 		public int Width { get; private set; }
 
-		public long GetPixelDirectLocation(int column, int row)
+		public double CalculateEuclideanDistance(Pixel a, Pixel b)
 		{
-			return (long)row * Width + column;
+			return Math.Sqrt(Math.Pow(a.Column - b.Column, 2d) + Math.Pow(a.Row - b.Row, 2d));
 		}
 
 		public bool PixelWithinRegion(int column, int row)

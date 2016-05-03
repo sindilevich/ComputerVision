@@ -9,12 +9,14 @@ namespace HoleFilling.Models
 
 		private readonly float m_epsilon;
 		private readonly string m_functionBody;
+		private readonly ImageRegion m_imageRegion;
 		private readonly int m_z;
-		private Func<long, long, float> m_function;
+		private Func<Pixel, Pixel, float> m_function;
 		private object m_lock = new object();
 
-		public WeightingFunction(string functionBody, int z, float epsilon)
+		public WeightingFunction(ImageRegion imageRegion, string functionBody, int z, float epsilon)
 		{
+			m_imageRegion = imageRegion;
 			m_functionBody = functionBody;
 			m_z = z < 1 ?
 				DEFAULT_Z :
@@ -24,7 +26,7 @@ namespace HoleFilling.Models
 				epsilon;
 		}
 
-		public Func<long, long, float> Calculate
+		public Func<Pixel, Pixel, float> Calculate
 		{
 			get
 			{
@@ -42,18 +44,18 @@ namespace HoleFilling.Models
 			}
 		}
 
-		private Func<long, long, float> CreateWeightingFunctionDynamically()
+		private Func<Pixel, Pixel, float> CreateWeightingFunctionDynamically()
 		{
 			// TODO: Add magic to convert function body from text to executable code
 			return null;
 		}
 
-		private Func<long, long, float> DefaultWeightingFunction()
+		private Func<Pixel, Pixel, float> DefaultWeightingFunction()
 		{
 			return (y, x) =>
 			{
 				// Per C# specification Math.Pow(0d, 0d) == 1
-				float exponent = (float)Math.Pow(Math.Abs(x - y), m_z);
+				float exponent = (float)Math.Pow(m_imageRegion.CalculateEuclideanDistance(x, y), m_z);
 				float result = 0f;
 
 				if (float.IsNegativeInfinity(exponent))

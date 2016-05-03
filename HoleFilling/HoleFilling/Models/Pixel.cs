@@ -10,7 +10,6 @@ namespace HoleFilling.Models
 		{
 			Column = column;
 			Row = row;
-			DirectLocation = imageRegion.GetPixelDirectLocation(Column, Row);
 		}
 
 		public float Color
@@ -27,8 +26,6 @@ namespace HoleFilling.Models
 
 		public int Column { get; private set; }
 
-		public long DirectLocation { get; private set; }
-
 		public int Row { get; private set; }
 
 		public override bool Equals(object obj)
@@ -38,16 +35,17 @@ namespace HoleFilling.Models
 				return false;
 			}
 
-			Pixel p = obj as Pixel;
+			Pixel pixel = obj as Pixel;
 
-			return p != null &&
-				DirectLocation == p.DirectLocation &&
-				Color == p.Color;
+			return pixel != null &&
+				Column == pixel.Column &&
+				Row == pixel.Row &&
+				Color == pixel.Color;
 		}
 
 		public override int GetHashCode()
 		{
-			return new { Color, Column, DirectLocation, Row }.GetHashCode();
+			return new { Color, Column, Row }.GetHashCode();
 		}
 	}
 }

@@ -112,7 +112,7 @@ namespace HoleFilling
 			functionBody = ExtractWeightingFunctionProperties(out z, out epsilon, out boundaryPixelsSampleSize);
 			ExtractVisualizationProperties(out markBoundary);
 			colorInterpolator = new NaiveColorInterpolator(
-				weightingFunction: new WeightingFunction(functionBody, z, epsilon));
+				weightingFunction: new WeightingFunction(m_holeFiller.ImageRegion, functionBody, z, epsilon));
 
 			logger = LoggingTask.Start(LoggingTaskType.FillHoles, "Naively filling holes");
 
@@ -126,7 +126,7 @@ namespace HoleFilling
 				}
 			}
 			colorInterpolator = new ApproximateColorInterpolator(
-				weightingFunction: new WeightingFunction(functionBody, z, epsilon),
+				weightingFunction: new WeightingFunction(m_holeFiller.ImageRegion, functionBody, z, epsilon),
 				boundaryPixelsSampleSize: boundaryPixelsSampleSize);
 
 			logger = LoggingTask.Start(LoggingTaskType.FillHoles, "Approximately filling holes");
