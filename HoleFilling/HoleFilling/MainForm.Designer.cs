@@ -173,7 +173,8 @@
 			this.weightingFunctionTextbox.ReadOnly = true;
 			this.weightingFunctionTextbox.Size = new System.Drawing.Size(394, 20);
 			this.weightingFunctionTextbox.TabIndex = 2;
-			this.weightingFunctionTextbox.Text = "(float)1 / Math.Pow(Math.Abs(x - y), z) + epsilon";
+			this.weightingFunctionTextbox.Text = "(float)1 / Math.Pow(Math.Sqrt(Math.Pow(x.Column - y.Column, 2d) + Math.Pow(x.Row " +
+    "- y.Row, 2d)), z) + epsilon";
 			// 
 			// zTextbox
 			// 
